@@ -5,6 +5,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -14,19 +15,27 @@ import javax.swing.JTextArea;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.TitledBorder;
 import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 
 import controlador.Comandos;
+import modelo.AnalizadoraC;
+import modelo.Gramatica;
+import modelo.Tabla;
 
 
 @SuppressWarnings("serial")
 public class Ventana extends VentanaAGeneral{
 	
-	JPanel panel;
-	JLabel autor, res, info;
+	JPanel panel, tabla;
+	JLabel autor, res, info, etqLog;
 	JTextArea gramatica, cadena;
 	JButton bAnalizar, bVerificarC, log;
-	JTable tabla;
+	JTable tablaR;
+	
+	//ATRIBUTOS PARA LOS COMANDOS
+	Tabla tablaA;
+	AnalizadoraC analizadora;
 	
 	
 	public Ventana() {
@@ -53,10 +62,12 @@ public class Ventana extends VentanaAGeneral{
 		
 		rest.gridx = 1;
 		rest.gridy = 4;
+		rest.weightx =1.0;
 		rest.gridwidth = 2;
 		rest.gridheight = 1;
 		
 		panel.add(autor, rest);
+		rest.weightx =0;
 		
 		info = new JLabel("Generación de tabla LL1 ->");
 		
@@ -79,6 +90,8 @@ public class Ventana extends VentanaAGeneral{
 		
 		panel.add(res, rest);
 		rest.weightx =0;
+		
+		etqLog = new JLabel("Sisale");
 		
 		//CREAR TEXTAREAS
 		gramatica = new JTextArea();
@@ -154,7 +167,10 @@ public class Ventana extends VentanaAGeneral{
 		panel.add(log, rest);
 		
 		//CREAR TABLA
-		tabla = new JTable(3,5);
+		tabla = new JPanel();
+		tabla.setBorder (BorderFactory.createTitledBorder (BorderFactory.createEtchedBorder (),"Tabla LL1",TitledBorder.CENTER,TitledBorder.TOP));
+		tablaR = new JTable(3,4);
+		tabla.add(tablaR);
 		
 		rest.gridx = 2;
 		rest.gridy = 0;
@@ -183,7 +199,12 @@ public void actionPerformed(ActionEvent e) {
 		if(gramatica.getText().compareTo("")==0) {
 			JOptionPane.showMessageDialog(this, "Ingresa una gramatica a analizar");
 		}else {
+			Gramatica gram = new Gramatica(gramatica.getText());
 			
+			this.tablaA = (Tabla)this.control.ejecutaComando(Comandos.CANALIZAG, gram, null);
+			//AGREGAR ELEMENTOS NECESARIOS EN CLASE TABLA PARA PODER CREAR LA TABLA AQUI
+			
+			this.repaint();
 		}//FIN IF
 		
 		break;	
@@ -192,7 +213,13 @@ public void actionPerformed(ActionEvent e) {
 		if(cadena.getText().compareTo("")==0) {
 			JOptionPane.showMessageDialog(this, "Ingresa una cadena a analizar");
 		}else {
-			
+			if(this.tablaA == null) {
+				JOptionPane.showMessageDialog(this, "Analiza una gramática primero");
+			}else{
+				this.analizadora = (AnalizadoraC)this.control.ejecutaComando(getName(), tablaA, tablaA);
+				//MOSTRAR SI LA CADENA ES VALIDA O NO
+				//SETEAR LA ETIQUETA DEL LOG
+			}//FIN IF	
 		}//FIN IF
 		break;
 		
@@ -200,7 +227,7 @@ public void actionPerformed(ActionEvent e) {
 		if(res.getText().compareTo("La cadena es: ")==0) {
 			JOptionPane.showMessageDialog(this, "Analiza primero una cadena");
 		}else {
-			
+			JOptionPane.showMessageDialog(this, etqLog);
 		}//FIN IF
 	break;
 		}//FIN SWITCH
