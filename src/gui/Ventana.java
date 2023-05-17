@@ -97,7 +97,7 @@ public class Ventana extends VentanaAGeneral{
 		gramatica = new JTextArea();
 		gramatica.setLineWrap(true);
 		//PLACEHOLDER
-		TextPrompt tFondo = new TextPrompt("INGRESA EN ESTA ÁREA LA GRAMÁTICA A ANALIZAR", gramatica);
+		TextPrompt tFondo = new TextPrompt("<html><p style=\"color:rgb(128,139,150);\"><i>INGRESA EN ESTA ÁREA LA GRAMÁTICA A ANALIZAR<br> DE LA FORMA:<br> S->aS</i></p></html>", gramatica);
 		tFondo.changeAlpha(0.75f);
 		tFondo.changeStyle(Font.ITALIC);
 		
