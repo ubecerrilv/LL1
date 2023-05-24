@@ -19,7 +19,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 
 import controlador.Comandos;
-import modelo.AnalizadoraC;
+import modelo.Operadora;
 import modelo.Gramatica;
 import modelo.Tabla;
 
@@ -35,7 +35,7 @@ public class Ventana extends VentanaAGeneral{
 	
 	//ATRIBUTOS PARA LOS COMANDOS
 	Tabla tablaA;
-	AnalizadoraC analizadora;
+	Operadora analizadora;
 	
 	
 	public Ventana() {
@@ -216,7 +216,7 @@ public void actionPerformed(ActionEvent e) {
 			if(this.tablaA == null) {
 				JOptionPane.showMessageDialog(this, "Analiza una gramática primero");
 			}else{
-				this.analizadora = (AnalizadoraC)this.control.ejecutaComando(getName(), tablaA, tablaA);
+				this.analizadora = (Operadora)this.control.ejecutaComando(getName(), tablaA, tablaA);
 				//MOSTRAR SI LA CADENA ES VALIDA O NO
 				//SETEAR LA ETIQUETA DEL LOG
 			}//FIN IF	
