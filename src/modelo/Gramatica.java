@@ -36,7 +36,6 @@ public class Gramatica implements Data {
 			
 			if(aux2[1].toCharArray()[0]=='e' && aux2[1].length()>1) {
 				String si=aux2[1].substring(1);
-				System.out.println(si);
 				producciones.add(new Produccion(aux2[0], si));//AÑADIR LA PRODUCCION
 			}else {
 				producciones.add(new Produccion(aux2[0], aux2[1]));//AÑADIR LA PRODUCCION
@@ -55,7 +54,7 @@ public class Gramatica implements Data {
 			}
 			
 		}//FIN FOR
-		System.out.println("NO TERMINALES");
+		/*System.out.println("NO TERMINALES");
 		for(int t =0; t<noTerminales.size();t++) {
 			System.out.println(noTerminales.get(t));
 		}
@@ -66,7 +65,7 @@ public class Gramatica implements Data {
 		System.out.println("GRAMATICA");
 		for(int i = 0; i<this.producciones.size();i++) {
 			System.out.println(producciones.get(i).getlI()+"->"+this.producciones.get(i).getlD());
-		}
+		}*/
 		
 	}//FIN CONSTRUCTOR
 	
@@ -102,5 +101,32 @@ public class Gramatica implements Data {
 			}
 		}
 		return false;
+	}
+	
+	public ArrayList<Character> primeros(char c){
+		ArrayList <Character>res = new ArrayList<Character>();
+		if(this.terminales.contains(c)) {//CARACTER ES UN TERMINAL
+			res.add(c);
+			return res;
+		}else {
+			for(int i = 0; i<this.producciones.size();i++) {//PARA TODAS LAS PRODUCCIONES xxx AGREGAR LOS PRIMEROS "DIRECTOS"
+				if (producciones.get(i).getlI().charAt(0)==c &&!esM(producciones.get(i).getlD().charAt(0))) {//PRODUCCIONES CON ESE NO TERMINAL
+					if(!res.contains(producciones.get(i).getlD().charAt(0))) {res.add(producciones.get(i).getlD().charAt(0));}//SI NO LO CONTIENE, LO AGREGA	
+				}else if(producciones.get(i).getlI().charAt(0)==c &&esM(producciones.get(i).getlD().charAt(0))){//EMPIEZA POR UN NO TERMINAL
+					ArrayList <Character>aux = new ArrayList<Character>();
+					char si = producciones.get(i).getlD().charAt(0);
+					aux = primeros(producciones.get(i).getlD().charAt(0));
+					for(int j = 0; j<aux.size();j++) {
+						if(!res.contains(aux.get(j))) {res.add(aux.get(j));}
+					}
+				}
+			}//FIN FOR
+			return res;			
+		}//FIN IF EXTERNO
+	}
+	
+	public ArrayList<Character> siguientes(char c){
+		ArrayList <Character>res = new ArrayList<Character>();
+		return res;
 	}
 }//FIN CLASE

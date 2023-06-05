@@ -19,7 +19,9 @@ public class Operadora implements Data {
 	}
 	
 	public Gramatica quitaRI (Gramatica gr) {//REEMPLAZAR X'S POR LETRAS DINAMICAS(CONTADOR Y AUMENTAR)
-		if(esRecursivaDirecta(gr)) {
+		if(esRecursivaIndirecta(gr)) {
+			return indirecta(gr);//PROCEDIMIENTO PARA REGRESAR SIN RECURSIVIDAD
+		}else if(esRecursivaDirecta(gr)) {
 			ArrayList<String> nr = new ArrayList<String>();//AUXILIAR PARA LO NO TERMINALES RECURSIVOS
 			for(int i =0; i<gr.getProducciones().size();i++) {
 				if(gr.getProducciones().get(i).getlI().compareTo(gr.getProducciones().get(i).getlD().substring(0, 1))==0) {
@@ -83,5 +85,70 @@ public class Operadora implements Data {
 		}
 		return si;
 	}//FIN ESRECURSIVA
+
+	public boolean esRecursivaIndirecta(Gramatica gram) {
+		ArrayList<Produccion> producciones = gram.getProducciones();
+		boolean si = false;
+		for(int i = 0; i<producciones.size();i++) {//PARA CADA PRODUCCION
+			String substring = producciones.get(i).getlD().substring(0,1);
+			if(contiene(gram.getNoTerminales(),substring) &&
+			   producciones.get(i).getlI().compareTo(producciones.get(i).getlD().substring(0,1))!=0) {//EL PRIMERO DEL LADO DERECHO ES UN NO TERMINAL Y DIFERENTE A EL MISMO
+				for(int j=0;j<producciones.size();j++) {
+					if(producciones.get(i).getlD().substring(0,1).compareTo(producciones.get(j).getlI())==0) {
+						if(producciones.get(i).getlI().compareTo(producciones.get(i).getlD().replace(producciones.get(i).getlD().substring(0,1),producciones.get(j).getlD()).substring(0,1))==0) {
+							si=true;
+						}						
+					}
+				}
+				
+			}
+		}//FIN FOR
+		return si;
+	}//FIN ES RECURSIVA INDIRECTA
 	
+	public boolean contiene(ArrayList<Character> arrayList, String c) {
+		boolean si=false;
+		for(int i=0;i<arrayList.size();i++) {
+			if(Character.toString(arrayList.get(i)).compareTo(c)==0) {
+				si=true;
+			}
+		}
+		return si;
+	}
+
+	public Gramatica indirecta(Gramatica gram) {
+		ArrayList<Produccion> producciones = gram.getProducciones();
+		int si = -1;
+		for(int i = 0; i<producciones.size();i++) {//PARA CADA PRODUCCION
+			String substring = producciones.get(i).getlD().substring(0,1);
+			if(contiene(gram.getNoTerminales(),substring) &&
+			   producciones.get(i).getlI().compareTo(producciones.get(i).getlD().substring(0,1))!=0) {//EL PRIMERO DEL LADO DERECHO ES UN NO TERMINAL Y DIFERENTE A EL MISMO
+				for(int j=0;j<producciones.size();j++) {
+					if(producciones.get(i).getlD().substring(0,1).compareTo(producciones.get(j).getlI())==0) {
+						if(producciones.get(i).getlI().compareTo(producciones.get(i).getlD().replace(producciones.get(i).getlD().substring(0,1),producciones.get(j).getlD()).substring(0,1))==0) {
+							si=i;
+						}						
+					}
+				}
+				
+			}
+		}//FIN FOR
+		
+		String substring = producciones.get(si).getlD().substring(0,1);
+		if(contiene(gram.getNoTerminales(),substring) &&
+		   producciones.get(si).getlI().compareTo(producciones.get(si).getlD().substring(0,1))!=0) {//EL PRIMERO DEL LADO DERECHO ES UN NO TERMINAL Y DIFERENTE A EL MISMO
+			for(int j=0;j<producciones.size();j++) {
+				if(producciones.get(si).getlD().substring(0,1).compareTo(producciones.get(j).getlI())==0) {
+					producciones.add(new Produccion(producciones.get(si).getlI(),producciones.get(si).getlD().replace(producciones.get(si).getlD().substring(0,1),producciones.get(j).getlD())));					
+				}
+			}
+			
+		}//FIN IF
+		producciones.remove(si);
+		String aux = "";
+		for(int i =0; i<producciones.size();i++) {
+			aux+= producciones.get(i).aString()+"\n";
+		}
+		return quitaRI(new Gramatica(aux));
+	}
 }//FIN CLASE

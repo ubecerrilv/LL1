@@ -40,7 +40,9 @@ public String getEquivalente() {
 public void setEquivalente(String equivalente) {
 	this.equivalente = equivalente;
 }
-
+public String aString() {
+	return this.lI+"->"+this.lD;
+}
 
 
 	
