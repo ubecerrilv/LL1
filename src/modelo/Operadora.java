@@ -70,7 +70,7 @@ public class Operadora implements Data {
 			return new Gramatica(gramres);
 			
 		}else {
-			return null;
+			return gr;
 		}//FIN IF SI ES RECURSIVA
 	}
 	

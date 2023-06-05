@@ -35,7 +35,17 @@ public class ControlVPrincipal extends ControlAbs {
 					System.out.println("}");
 				}
 				
-				
+				System.out.println("SIGUENTES:");
+				ArrayList<Character> nt2 = res.getNoTerminales();
+				for(int i =0; i<nt2.size();i++) {
+					System.out.print(nt2.get(i)+"={");
+					ArrayList <Character>resp = new ArrayList<Character>();
+					resp = res.siguientes(nt2.get(i));
+					for(int j = 0; j<resp.size();j++) {
+						System.out.print(resp.get(j)+",");
+					}
+					System.out.println("}");
+				}
 				
 				//GENERAR TABLA EN CLASE TABLA
 				Tabla tabla = new Tabla(res);

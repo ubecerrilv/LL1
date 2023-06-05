@@ -114,10 +114,17 @@ public class Gramatica implements Data {
 					if(!res.contains(producciones.get(i).getlD().charAt(0))) {res.add(producciones.get(i).getlD().charAt(0));}//SI NO LO CONTIENE, LO AGREGA	
 				}else if(producciones.get(i).getlI().charAt(0)==c &&esM(producciones.get(i).getlD().charAt(0))){//EMPIEZA POR UN NO TERMINAL
 					ArrayList <Character>aux = new ArrayList<Character>();
-					char si = producciones.get(i).getlD().charAt(0);
 					aux = primeros(producciones.get(i).getlD().charAt(0));
-					for(int j = 0; j<aux.size();j++) {
-						if(!res.contains(aux.get(j))) {res.add(aux.get(j));}
+					if(aux.contains('e') && producciones.get(i).getlD().length()>=2) {
+						aux = primeros(producciones.get(i).getlD().charAt(1));
+						for(int j = 0; j<aux.size();j++) {
+							if(!res.contains(aux.get(j))) {res.add(aux.get(j));}
+						}
+					}else {
+						aux = primeros(producciones.get(i).getlD().charAt(0));
+						for(int j = 0; j<aux.size();j++) {
+							if(!res.contains(aux.get(j))) {res.add(aux.get(j));}
+						}
 					}
 				}
 			}//FIN FOR
@@ -127,6 +134,49 @@ public class Gramatica implements Data {
 	
 	public ArrayList<Character> siguientes(char c){
 		ArrayList <Character>res = new ArrayList<Character>();
+		if(producciones.get(0).getlI().charAt(0)==c) {
+			res.add('$');
+		}
+		for(int i =0;i<producciones.size();i++) {
+			int ind = producciones.get(i).getlD().indexOf(c);
+			if(ind!=-1) {
+				String[] aux  = producciones.get(i).getlD().split(""+c);
+				for(String si:aux) {
+					if(si.compareTo("")!=0 && ind!=producciones.get(i).getlD().length()-1) {
+						ArrayList <Character>aux2 = new ArrayList<Character>();
+						aux2 = primeros(si.charAt(0));
+						for(int j = 0; j<aux2.size();j++) {
+							if(!res.contains(aux2.get(j)) && aux2.get(j)!='e') {res.add(aux2.get(j));}
+						}//FIN FOR PARA AGREGAR
+					}//FIN IF VERIFICAR LADO DERECHO EXISTENTE	
+				}//FIN IF DEL SPLIT
+				
+				if(ind == producciones.get(i).getlD().length()-1 && c!= producciones.get(i).getlI().charAt(0)) {//ULTIMO ELEMENTO
+					ArrayList <Character>aux2 = new ArrayList<Character>();
+					aux2 = siguientes(producciones.get(i).getlI().charAt(0));
+					for(int j = 0; j<aux2.size();j++) {
+						if(!res.contains(aux2.get(j)) && aux2.get(j)!='e') {res.add(aux2.get(j));}
+					}//FIN FOR PARA AGREGAR
+				}//FIN IF 2
+				
+				if(aux.length==2) {
+					if(aux[1].compareTo("")!=0) {
+						ArrayList <Character>aux2 = new ArrayList<Character>();
+						aux2 = primeros(aux[1].charAt(0));
+						if(aux2.contains('e')) {
+							ArrayList <Character>aux3 = new ArrayList<Character>();
+							aux2 = siguientes(producciones.get(i).getlI().charAt(0));
+							for(int j = 0; j<aux3.size();j++) {
+								if(!res.contains(aux3.get(j)) && aux3.get(j)!='e') {res.add(aux3.get(j));}
+							}//FIN FOR PARA AGREGAR
+						}
+					}//FIN IF VERIFICAR LADO DERECHO EXISTENTE	
+				}//FIN IF 3
+				
+				
+			}//FIN IF DE EXISTENCIA DEL SIMBOLO DEL LADO DERECHO
+		}//FIN FOR
+		
 		return res;
 	}
 }//FIN CLASE
