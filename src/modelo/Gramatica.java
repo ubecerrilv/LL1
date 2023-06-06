@@ -48,7 +48,7 @@ public class Gramatica implements Data {
 			
 			char aux4[] = aux2[1].toCharArray();
 			for(int x= 0;x<aux4.length;x++) {
-				if(!terminales.contains(aux4[x]) && !esM(aux4[x])) {//SI NO ESTÁ Y NO ES MAYUSCULA
+				if(!terminales.contains(aux4[x]) && !esM(aux4[x]) && aux4[x]!='e') {//SI NO ESTÁ Y NO ES MAYUSCULA
 					terminales.add(aux4[x]);
 				}
 			}
@@ -108,6 +108,9 @@ public class Gramatica implements Data {
 		if(this.terminales.contains(c)) {//CARACTER ES UN TERMINAL
 			res.add(c);
 			return res;
+		}else if(c=='e') {
+			res.add('e');
+			return res;
 		}else {
 			for(int i = 0; i<this.producciones.size();i++) {//PARA TODAS LAS PRODUCCIONES xxx AGREGAR LOS PRIMEROS "DIRECTOS"
 				if (producciones.get(i).getlI().charAt(0)==c &&!esM(producciones.get(i).getlD().charAt(0))) {//PRODUCCIONES CON ESE NO TERMINAL
@@ -132,7 +135,7 @@ public class Gramatica implements Data {
 		}//FIN IF EXTERNO
 	}
 	
-	public ArrayList<Character> siguientes(char c){
+	public ArrayList<Character> siguientes(char c, char ant){
 		ArrayList <Character>res = new ArrayList<Character>();
 		if(producciones.get(0).getlI().charAt(0)==c) {
 			res.add('$');
@@ -151,21 +154,21 @@ public class Gramatica implements Data {
 					}//FIN IF VERIFICAR LADO DERECHO EXISTENTE	
 				}//FIN IF DEL SPLIT
 				
-				if(ind == producciones.get(i).getlD().length()-1 && c!= producciones.get(i).getlI().charAt(0)) {//ULTIMO ELEMENTO
+				if(ind == producciones.get(i).getlD().length()-1 && c!= producciones.get(i).getlI().charAt(0) && producciones.get(i).getlI().charAt(0)!=ant) {//ULTIMO ELEMENTO
 					ArrayList <Character>aux2 = new ArrayList<Character>();
-					aux2 = siguientes(producciones.get(i).getlI().charAt(0));
+					aux2 = siguientes(producciones.get(i).getlI().charAt(0), c);
 					for(int j = 0; j<aux2.size();j++) {
 						if(!res.contains(aux2.get(j)) && aux2.get(j)!='e') {res.add(aux2.get(j));}
 					}//FIN FOR PARA AGREGAR
 				}//FIN IF 2
 				
 				if(aux.length==2) {
-					if(aux[1].compareTo("")!=0) {
+					if(aux[1].compareTo("")!=0 && producciones.get(i).getlI().charAt(0)!=ant) {
 						ArrayList <Character>aux2 = new ArrayList<Character>();
 						aux2 = primeros(aux[1].charAt(0));
 						if(aux2.contains('e')) {
 							ArrayList <Character>aux3 = new ArrayList<Character>();
-							aux2 = siguientes(producciones.get(i).getlI().charAt(0));
+							aux3 = siguientes(producciones.get(i).getlI().charAt(0), c);
 							for(int j = 0; j<aux3.size();j++) {
 								if(!res.contains(aux3.get(j)) && aux3.get(j)!='e') {res.add(aux3.get(j));}
 							}//FIN FOR PARA AGREGAR

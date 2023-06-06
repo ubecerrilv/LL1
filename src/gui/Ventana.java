@@ -1,8 +1,11 @@
 package gui;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 
 import javax.swing.BorderFactory;
@@ -27,7 +30,7 @@ import modelo.Tabla;
 @SuppressWarnings("serial")
 public class Ventana extends VentanaAGeneral{
 	
-	JPanel panel, tabla;
+	JPanel panel, tabla, extra;
 	JLabel autor, res, info, etqLog;
 	JTextArea gramatica, cadena;
 	JButton bAnalizar, bVerificarC, log;
@@ -36,6 +39,9 @@ public class Ventana extends VentanaAGeneral{
 	//ATRIBUTOS PARA LOS COMANDOS
 	Tabla tablaA;
 	Operadora analizadora;
+	
+	String [][] mat;
+	GridBagConstraints rest;
 	
 	
 	public Ventana() {
@@ -50,7 +56,7 @@ public class Ventana extends VentanaAGeneral{
 		
 		//CREAR E INSERTAR COMPONENTES
 		//CREACION DEL OBJETO DE RESTRICCIONES
-		GridBagConstraints rest = new GridBagConstraints();
+		rest= new GridBagConstraints();
 		
 		//PANEL CENTRAL
 		panel = new JPanel();
@@ -59,6 +65,7 @@ public class Ventana extends VentanaAGeneral{
 
 		//CREAR ETIQUETAS
 		autor = new JLabel("Realizado por Ulises Becerril Valdés");
+		extra = new JPanel();
 		
 		rest.gridx = 1;
 		rest.gridy = 4;
@@ -167,7 +174,7 @@ public class Ventana extends VentanaAGeneral{
 		panel.add(log, rest);
 		
 		//CREAR TABLA
-		tabla = new JPanel();
+		tabla = new JPanel(new GridLayout(2,1));
 		tabla.setBorder (BorderFactory.createTitledBorder (BorderFactory.createEtchedBorder (),"Tabla LL1",TitledBorder.CENTER,TitledBorder.TOP));
 		tablaR = new JTable(3,4);
 		tabla.add(tablaR);
@@ -200,11 +207,66 @@ public void actionPerformed(ActionEvent e) {
 			JOptionPane.showMessageDialog(this, "Ingresa una gramatica a analizar");
 		}else {
 			Gramatica gram = new Gramatica(gramatica.getText());
+				tabla.removeAll();
+		
+				extra.removeAll();
 			
 			this.tablaA = (Tabla)this.control.ejecutaComando(Comandos.CANALIZAG, gram, null);
 			//AGREGAR ELEMENTOS NECESARIOS EN CLASE TABLA PARA PODER CREAR LA TABLA AQUI
+			mat= tablaA.getMat();
+			JPanel si = new JPanel(new GridLayout(mat.length, mat[0].length));
+			si.setBorder(new EmptyBorder(5,5,5,5));
+			for(int i =0;i<mat.length;i++) {
+				for(int j =0; j<mat[i].length;j++) {
+					if(mat[i][j]!=null) {
+						JLabel o = new JLabel("   "+mat[i][j]);
+						o.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+						si.add(o);						
+					}else {
+						JLabel o = new JLabel("");
+						o.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+						si.add(o);
+					}
+				}
+			}
 			
-			this.repaint();
+			tabla.remove(tablaR);
+			tabla.add(si, BorderLayout.CENTER);
+			
+			
+			extra.setLayout(new GridBagLayout());
+			rest.gridx = 0;
+			rest.gridy = 0;
+			rest.gridwidth = 1;
+			rest.gridheight = 2;
+			rest.fill = GridBagConstraints.BOTH;
+			JLabel o = new JLabel(tablaA.gramToString());
+			o.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+			extra.add(o,rest);
+			
+			rest.gridx = 1;
+			rest.gridy = 0;
+			rest.gridwidth = 1;
+			rest.gridheight = 1;
+			JLabel o1 = new JLabel(tablaA.pToString());
+			o1.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+			extra.add(o1,rest);
+			
+			rest.gridx = 1;
+			rest.gridy = 1;
+			rest.gridwidth = 1;
+			rest.gridheight = 1;
+			JLabel o2 = new JLabel(tablaA.sToString());
+			o2.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+			extra.add(o2,rest);
+			rest.fill = GridBagConstraints.NONE;
+			
+			tabla.add(extra);
+			
+			
+			this.setVisible(false);
+			this.setVisible(true);
+			repaint();
 		}//FIN IF
 		
 		break;	
