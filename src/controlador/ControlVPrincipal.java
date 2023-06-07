@@ -20,7 +20,13 @@ public class ControlVPrincipal extends ControlAbs {
 				//GENERAR TABLA EN CLASE TABLA
 				Tabla tabla = new Tabla(res);
 				return tabla;
-			}
+				
+			case Comandos.ANALIZAC:
+				Tabla ini =(Tabla) d;
+				Tabla tab = op.analizaC(ini);
+				
+				return tab;
+			}//FIN SWITCH
 		return null;//REGRESAR UN MODELO
 	}
 

@@ -54,18 +54,6 @@ public class Gramatica implements Data {
 			}
 			
 		}//FIN FOR
-		/*System.out.println("NO TERMINALES");
-		for(int t =0; t<noTerminales.size();t++) {
-			System.out.println(noTerminales.get(t));
-		}
-		System.out.println("TERMINALES");
-		for(int t =0; t<terminales.size();t++) {
-			System.out.println(terminales.get(t));
-		}
-		System.out.println("GRAMATICA");
-		for(int i = 0; i<this.producciones.size();i++) {
-			System.out.println(producciones.get(i).getlI()+"->"+this.producciones.get(i).getlD());
-		}*/
 		
 	}//FIN CONSTRUCTOR
 	

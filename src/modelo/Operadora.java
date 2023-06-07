@@ -1,6 +1,7 @@
 package modelo;
 
 import java.util.ArrayList;
+import java.util.Stack;
 
 public class Operadora implements Data {
 /*****************************************************************************************
@@ -150,5 +151,69 @@ public class Operadora implements Data {
 			aux+= producciones.get(i).aString()+"\n";
 		}
 		return quitaRI(new Gramatica(aux));
+	}
+	
+	public Tabla analizaC (Tabla tab) {
+		//VARIABLES NECESARIAS
+		int a = 0; //AUMENTAR
+		Gramatica gram = tab.getGramar();
+		ArrayList<Character> ter =gram.getTerminales();
+		ArrayList<Character> nter =gram.getNoTerminales();
+		String cadena = tab.getCadena();
+		String mat[][] = tab.getMat();
+		char apuntador = cadena.charAt(a);
+		Stack<Character> pila = new Stack<>();
+		String log="<html><body>";
+		boolean ac =true;
+		
+		//SET UP
+		pila.push('$');
+		pila.push(tab.getInicial());
+		
+		fin:
+		while (!pila.isEmpty()){
+			char act = pila.pop();
+			
+			if(nter.contains(act)) {//NO TERMINAL
+				for(int i =1;i<mat.length;i++) {
+					for(int j =1; j<mat[i].length;j++) {
+						if(mat[0][j].compareTo(""+apuntador)==0 && mat[i][0].compareTo(""+act)==0) {
+							if(mat[i][j]!=null) {
+								log+=mat[i][j]+"<br>";
+								String prod[] = mat[i][j].split("->");
+								if(prod[1].charAt(0)!='e') {
+									for(int l =prod[1].length()-1;l>=0;l--) {
+										pila.push(prod[1].charAt(l));
+									}//FIN FOR PARA ANADIR A LA PILA									
+								}//FIN IF SI NO ES EPSILON
+							}else {
+								log+="Error<br>";
+								pila.clear();
+								ac=false;
+								break fin;
+							}
+						}
+					}
+				}//FIN FOR MATRIZ
+				//AGREGAR A LA PILA Y SEGUIR
+			}else if(ter.contains(act)) {//TERMINAL
+				if(act == apuntador) {
+					a++;
+					apuntador = cadena.charAt(a);
+				}else {
+					log+="Error<br>";
+					pila.clear();
+					ac=false;
+					break fin;
+				}
+			}//FIN IF NO TERMINAL-TERMINAL
+		}//FIN WHILE
+		
+		log+="</body></html>";
+		tab.setLog(log);
+		tab.setAcept(ac);
+		
+	
+		return tab;
 	}
 }//FIN CLASE

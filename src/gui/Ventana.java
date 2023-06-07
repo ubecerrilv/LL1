@@ -13,6 +13,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.UIManager;
@@ -42,6 +43,7 @@ public class Ventana extends VentanaAGeneral{
 	
 	String [][] mat;
 	GridBagConstraints rest;
+	char gramini;
 	
 	
 	public Ventana() {
@@ -98,13 +100,16 @@ public class Ventana extends VentanaAGeneral{
 		panel.add(res, rest);
 		rest.weightx =0;
 		
-		etqLog = new JLabel("Sisale");
+		etqLog = new JLabel();
 		
 		//CREAR TEXTAREAS
 		gramatica = new JTextArea();
 		gramatica.setLineWrap(true);
 		//PLACEHOLDER
-		TextPrompt tFondo = new TextPrompt("<html><p style=\"color:rgb(128,139,150);\"><i>INGRESA EN ESTA ÁREA LA GRAMÁTICA A ANALIZAR<br> DE LA FORMA:<br> S->aS</i></p></html>", gramatica);
+		TextPrompt tFondo = new TextPrompt("<html><p style=\"color:rgb(128,139,150);\"><i>INGRESA EN ESTA ÁREA LA GRAMÁTICA A ANALIZAR<br> "
+			                                                                        	+ "DE LA FORMA:<br>"
+			                                                                        	+ "S->aS<br>"
+			                                                                        	+ "Para ingresar épsilon coloca la letra \"e\"</i></p></html>", gramatica);
 		tFondo.changeAlpha(0.75f);
 		tFondo.changeStyle(Font.ITALIC);
 		
@@ -206,6 +211,7 @@ public void actionPerformed(ActionEvent e) {
 		if(gramatica.getText().compareTo("")==0) {
 			JOptionPane.showMessageDialog(this, "Ingresa una gramatica a analizar");
 		}else {
+			this.gramini = gramatica.getText().charAt(0);
 			Gramatica gram = new Gramatica(gramatica.getText());
 				tabla.removeAll();
 		
@@ -229,6 +235,7 @@ public void actionPerformed(ActionEvent e) {
 					}
 				}
 			}
+			
 			
 			tabla.remove(tablaR);
 			tabla.add(si, BorderLayout.CENTER);
@@ -261,8 +268,12 @@ public void actionPerformed(ActionEvent e) {
 			extra.add(o2,rest);
 			rest.fill = GridBagConstraints.NONE;
 			
-			tabla.add(extra);
+			JScrollPane scrollPane = new JScrollPane(extra);
+			tabla.add(scrollPane);
 			
+			if(!tablaA.isLl1()) {
+				JOptionPane.showMessageDialog(this, "La gramática no es LL(1)");
+			}
 			
 			this.setVisible(false);
 			this.setVisible(true);
@@ -274,13 +285,25 @@ public void actionPerformed(ActionEvent e) {
 	case Comandos.ANALIZAC:
 		if(cadena.getText().compareTo("")==0) {
 			JOptionPane.showMessageDialog(this, "Ingresa una cadena a analizar");
+			
+		}else if(!tablaA.isLl1()) {
+			JOptionPane.showMessageDialog(this, "La gramática no es LL(1)\nEl análisis de la cadena no es posible");
 		}else {
 			if(this.tablaA == null) {
 				JOptionPane.showMessageDialog(this, "Analiza una gramática primero");
 			}else{
-				this.analizadora = (Operadora)this.control.ejecutaComando(getName(), tablaA, tablaA);
+				tablaA.setCadena(this.cadena.getText()+"$");
+				tablaA.setInicial(gramini);
+				this.tablaA = (Tabla)this.control.ejecutaComando(Comandos.ANALIZAC, tablaA, null);
 				//MOSTRAR SI LA CADENA ES VALIDA O NO
+				if(tablaA.isAcept()) {
+					res.setText("La cadena es: aceptada");
+				}else {
+					res.setText("La cadena es: no aceptada");
+				}
 				//SETEAR LA ETIQUETA DEL LOG
+				etqLog.setText(tablaA.getLog());
+				repaint();
 			}//FIN IF	
 		}//FIN IF
 		break;
@@ -288,7 +311,7 @@ public void actionPerformed(ActionEvent e) {
 	case Comandos.LOG:
 		if(res.getText().compareTo("La cadena es: ")==0) {
 			JOptionPane.showMessageDialog(this, "Analiza primero una cadena");
-		}else {
+		}else if(etqLog.getText().compareTo("")!=0){
 			JOptionPane.showMessageDialog(this, etqLog);
 		}//FIN IF
 	break;

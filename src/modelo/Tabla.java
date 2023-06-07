@@ -9,6 +9,10 @@ public class Tabla implements Data {
  *****************************************************************************************/
 	String [][] mat;
 	Gramatica gramar;
+	String cadena;
+	boolean acept, ll1 =true;
+	String log;
+	char inicial;
 /*****************************************************************************************
 * 										METODOS
 *****************************************************************************************/
@@ -45,6 +49,7 @@ public class Tabla implements Data {
 							mat[i][j]=producciones.get(x).aString();							
 						}else {
 							mat[i][j]+="|"+producciones.get(x).getlD();
+							ll1=false;
 						}
 					}else if(producciones.get(x).getlI().compareTo(mat[i][0])==0
 					&& gram.primeros(producciones.get(x).getlD().charAt(0)).contains('e')
@@ -53,22 +58,13 @@ public class Tabla implements Data {
 							mat[i][j]=producciones.get(x).aString();							
 						}else {
 							mat[i][j]+="|"+producciones.get(x).getlD();
+							ll1=false;
 						}
 					}
 				}//FIN FOR
 			}//FIN FOR
 			
-		}//FIN FOR
-		
-		
-		/*for(int i =0;i<mat.length;i++) {
-			for(int j =0; j<mat[i].length;j++) {
-				System.out.print(mat[i][j]+"\t\t");
-			}
-			System.out.println();
-		}*/
-		
-		
+		}//FIN FOR	
 		
 	}//FIN CONSTRUCTOR TABLA
 
@@ -81,7 +77,7 @@ public class Tabla implements Data {
 	}
 	
 	public String gramToString() {
-		String si="<html><body>GRAMATICA SIN RECURSIVIDAD:<br>";
+		String si="<html><body>GRAMATICA SIN<br>RECURSIVIDAD:<br>";
 		for(int i =0; i<this.gramar.getProducciones().size();i++) {
 			si+=gramar.getProducciones().get(i).aString()+"<br>";
 		}
@@ -89,7 +85,7 @@ public class Tabla implements Data {
 		return si;
 	}
 	public String pToString() {
-		String si="<html><body>CONJUNTOS DE PRIMEROS:<br>";
+		String si="<html><body>CONJUNTOS DE<br>PRIMEROS:<br>";
 		ArrayList<Character> nt = gramar.getNoTerminales();
 		for(int i = 0; i<nt.size();i++) {
 			ArrayList<Character> p = gramar.primeros(nt.get(i));
@@ -104,7 +100,7 @@ public class Tabla implements Data {
 	}
 	
 	public String sToString() {
-		String si="<html><body>CONJUNTOS DE SIGUIENTES:<br>";
+		String si="<html><body>CONJUNTOS DE<br>SIGUIENTES:<br>";
 		ArrayList<Character> nt = gramar.getNoTerminales();
 		for(int i = 0; i<nt.size();i++) {
 			ArrayList<Character> p = gramar.siguientes(nt.get(i), '~');
@@ -118,4 +114,56 @@ public class Tabla implements Data {
 		return si;
 		
 	}
+
+	public String getCadena() {
+		return cadena;
+	}
+
+	public void setCadena(String cadena) {
+		this.cadena = cadena;
+	}
+
+	public boolean isAcept() {
+		return acept;
+	}
+
+	public void setAcept(boolean acept) {
+		this.acept = acept;
+	}
+
+	public String getLog() {
+		return log;
+	}
+
+	public void setLog(String log) {
+		this.log = log;
+	}
+
+	public Gramatica getGramar() {
+		return gramar;
+	}
+
+	public void setGramar(Gramatica gramar) {
+		this.gramar = gramar;
+	}
+
+	public char getInicial() {
+		return inicial;
+	}
+
+	public void setInicial(char inicial) {
+		this.inicial = inicial;
+	}
+
+	public boolean isLl1() {
+		return ll1;
+	}
+
+	public void setLl1(boolean ll1) {
+		this.ll1 = ll1;
+	}
+	
+	
+	
+	
 }
